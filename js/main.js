@@ -29,7 +29,7 @@ let apples= [
     },
     {
         x: 40,
-        y: 0,
+        y: 100,
         appleMangé:0
     }
 
@@ -39,30 +39,30 @@ function startGame() {
     const c = document.getElementById("canvas");
     const ctx = c.getContext("2d");
     const snake = new Snake(15, 10, c, ctx, "#0000FF");
-    const apple = new Snake(5,5, c, ctx ,'red');
-    apple.drawApple();
-  //  snake.createSnakeBody();
-     snake.draw();
-    moveSnake(snake, apples);
+    const appleobj = new Snake(15,10, c, ctx ,'red');
+    appleobj.drawApple();
+    snake.createSnakeBody();
+    // snake.draw();
+    moveSnake(snake, appleobj,apples);
    
 }
 
 
-// function appleMangé(snakeBody, apples){
+function appleMangé(snakeBody, apples){
 
-//     let pos= {
-//         posX:snakeBody[0].x,
-//         posY:snakeBody[0].y
-//     }
-//       for( let i=0;i<apples.length;i++)
-//       {
-//           if(pos.posX===apples[i].x  && pos.posY === apples[i].y)
-//           {
-//               apples[i].appleMangé=1;
-//           }
-//           console.table(apples);
-//       }  
-// }
+    let pos= {
+        posX:snakeBody[0].x,
+        posY:snakeBody[0].y
+    }
+      for( let i=0;i<apples.length;i++)
+      {
+          if(pos.posX===apples[i].x  && pos.posY === apples[i].y)
+          {
+              apples[i].appleMangé=1;
+          }
+          console.table(apples);
+      }  
+}
 
 
 function findAt(position) {
@@ -84,7 +84,7 @@ function addElement(posX, posY) {
     snakeBody.unshift({ x: posX, y: posY, place: 1 });
 }
 
-function moveSnake(snake,apples) {
+function moveSnake(snake,appleobj,apples) {
     document.addEventListener("keydown", (event) => {
         switch (event.code) {
             case 'ArrowLeft':
@@ -103,15 +103,19 @@ function moveSnake(snake,apples) {
                 console.log(event);
         }
       
-        // appleMangé(snakeBody, apples);
+        appleMangé(snakeBody, apples);
+       
+        //for (let i = 0 ; i <= apples.length ; i++) { console.log(apples[i].appleMangé);}
+        for (let i = 0 ; i < apples.length ; i++)
+        { if(apples[i].appleMangé === 1)
+            {   apples.splice(apples.indexOf(apples[i]),1);
+                            
+                //removeItemAll(apples,i);  
+             }
+        }
+       
         snake.update();
-        // apple.drawApple();
-        // //for (let i = 0 ; i <= apples.length ; i++) { console.log(apples[i].appleMangé);}
-        // for (let i = 0 ; i < apples.length ; i++)
-        // { if(apples[i].appleMangé === 1)
-        //     {    console.log(apples[i.appleMangé]) //delete cette apple 
-        //      }
-        // }
+        appleobj.drawApple();
         
        
     })
@@ -132,9 +136,9 @@ class Snake {
             this.ctx.fillStyle = this.color; 
             this.ctx.fillRect(apples[i].x, apples[i].y, this.size, this.size);
             this.ctx.stroke(); 
-            console.log(apples[i].x, apples[i].y, this.size, this.size);
             }
     }
+    
     draw() {
       
         snakeBody.forEach(element => { this.ctx.beginPath(); 
@@ -142,16 +146,6 @@ class Snake {
             this.ctx.fillRect(element.x, element.y, this.size, this.size); 
             this.ctx.stroke(); });
     }
-    // createApples() {
-    //     for (let i = 0; i < this.length; i++) {
-    //         snakeBody.push({
-    //             x: this.size*i,
-    //             y: 0,
-    //             place: i+1
-    //         })
-    //     }
-    //     this.draw();
-    // }
     createSnakeBody(){
         for (let i = 0; i < this.length; i++) {
             snakeBody.push({
